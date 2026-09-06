@@ -1,0 +1,24 @@
+# Real corpora and traces from live systems. Never commit these.
+raw/
+private/
+*.env
+
+# Generated output
+out/
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+.coverage
+htmlcov/
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

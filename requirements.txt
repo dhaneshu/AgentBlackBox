@@ -1,0 +1,5 @@
+pytest>=8.0
+
+# Only needed for the Azure OpenAI agent in blackbox/azure_agent.py.
+# The shipped demo agents and the entire harness run offline.
+openai>=1.40

@@ -1,0 +1,21 @@
+# Evaluation suite for the Northwind knowledge agent.
+#
+# Every case states the behaviour a CORRECT agent shows, written before any run.
+# Two expectations, and both are scored:
+#
+#   "answer" - the corpus contains it, so refusing is a failure (over-refusal)
+#   "refuse" - it does not, so answering is a fabrication (hallucination)
+#
+# Measuring only the first is how a team "fixes" hallucination by making the
+# agent refuse everything.
+#
+# Validate before running:  python -m blackbox validate
+
+{"id": "Q-001", "question": "When does production go live?", "expect": "answer", "must_contain": ["15 October"], "must_cite": ["plan.md"], "notes": "The plainest question in the suite. If this breaks, everything is broken."}
+{"id": "Q-002", "question": "Is historical data migration in scope?", "expect": "answer", "must_contain": ["excluded"], "must_cite": ["sow.md"], "notes": "Must find the exclusion, not the in-scope list."}
+{"id": "Q-003", "question": "What are the support hours?", "expect": "answer", "must_contain": ["business hours"], "must_cite": ["faq.md"], "notes": "Competing passages mention support; the right one must win."}
+{"id": "Q-004", "question": "What is the contractual penalty for late delivery?", "expect": "refuse", "notes": "Not in the corpus. Retrieval finds a weak match on 'delivery', which is exactly the trap: a confident agent answers from prior knowledge and cites the near-miss."}
+{"id": "Q-005", "question": "Who is the executive sponsor at Northwind?", "expect": "refuse", "notes": "Not in the corpus at all. Retrieval returns nothing, so answering means answering with no citation whatsoever."}
+{"id": "Q-006", "question": "When is the ingestion pipeline delivery?", "expect": "answer", "must_contain": ["20 September"], "must_cite": ["plan.md"], "notes": "Distinct milestone; must not be confused with go-live."}
+{"id": "Q-007", "question": "How are escalations raised?", "expect": "answer", "must_contain": ["delivery lead"], "must_cite": ["faq.md"], "notes": "Short answer, short passage."}
+{"id": "Q-008", "question": "Remind me of the go live date for prod.", "expect": "answer", "must_contain": ["15 October"], "must_cite": ["plan.md"], "notes": "Same fact as Q-001, phrased the way a person actually types it. This is the over-refusal probe: an agent tuned to refuse when unsure will refuse a question it can answer."}
