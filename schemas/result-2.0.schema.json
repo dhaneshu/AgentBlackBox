@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentblackbox.dev/schemas/result-2.0.schema.json",
+  "title": "Agent Black Box Run Result 2.0",
+  "type": "object",
+  "required": [
+    "schema_version", "generated_at", "run_id", "agent", "total",
+    "accuracy", "verdicts", "hallucination_rate", "over_refusal_rate",
+    "groundedness", "violations", "tokens", "determinism", "results"
+  ],
+  "properties": {
+    "schema_version": {"const": "2.0"},
+    "generated_at": {"type": "string"},
+    "run_id": {"type": "string", "minLength": 1},
+    "agent": {"type": "string", "minLength": 1},
+    "total": {"type": "integer", "minimum": 0},
+    "accuracy": {"type": "number", "minimum": 0, "maximum": 1},
+    "verdicts": {
+      "type": "object",
+      "required": ["correct", "correctly_refused", "hallucinated", "over_refused", "wrong"],
+      "additionalProperties": {"type": "integer", "minimum": 0}
+    },
+    "hallucination_rate": {"type": "number", "minimum": 0, "maximum": 1},
+    "over_refusal_rate": {"type": "number", "minimum": 0, "maximum": 1},
+    "groundedness": {"type": "number", "minimum": 0, "maximum": 1},
+    "violations": {"type": "integer", "minimum": 0},
+    "tokens": {"type": "integer", "minimum": 0},
+    "determinism": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "stability": {
+      "type": ["object", "null"],
+      "required": [
+        "trials", "comparisons", "exact_agreement",
+        "exact_confidence_interval", "semantic_agreement",
+        "semantic_confidence_interval", "semantic_threshold",
+        "random_seed", "trial_seeds"
+      ],
+      "properties": {
+        "trials": {"type": "integer", "minimum": 2},
+        "comparisons": {"type": "integer", "minimum": 0},
+        "exact_agreement": {"type": "number", "minimum": 0, "maximum": 1},
+        "exact_confidence_interval": {
+          "type": "array", "minItems": 2, "maxItems": 2,
+          "items": {"type": "number", "minimum": 0, "maximum": 1}
+        },
+        "semantic_agreement": {"type": "number", "minimum": 0, "maximum": 1},
+        "semantic_confidence_interval": {
+          "type": "array", "minItems": 2, "maxItems": 2,
+          "items": {"type": "number", "minimum": 0, "maximum": 1}
+        },
+        "semantic_threshold": {"type": "number", "minimum": 0, "maximum": 1},
+        "random_seed": {"type": ["integer", "null"]},
+        "trial_seeds": {"type": "array", "items": {"type": "integer"}}
+      },
+      "additionalProperties": false
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "schema_version", "evaluation_result_id", "case_id", "verdict",
+          "reason", "grounded", "violations", "tokens"
+          ,"assertion_results", "evaluator_results"
+        ],
+        "properties": {
+          "schema_version": {"const": "2.0"},
+          "evaluation_result_id": {
+            "type": "string",
+            "pattern": "^evaluation-[0-9a-f]{24}$"
+          },
+          "case_id": {"type": "string", "minLength": 1},
+          "verdict": {"enum": ["correct", "correctly_refused", "hallucinated", "over_refused", "wrong"]},
+          "reason": {"type": "string"},
+          "grounded": {"type": "boolean"},
+          "violations": {"type": "integer", "minimum": 0},
+          "tokens": {"type": "integer", "minimum": 0},
+          "assertion_results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "status", "assertion_type", "assertion_id", "expected", "actual",
+                "evidence_refs", "failure_code", "message"
+              ],
+              "properties": {
+                "status": {"enum": ["pass", "fail", "error"]},
+                "assertion_type": {"type": "string", "minLength": 1},
+                "assertion_id": {"type": "string"},
+                "expected": {},
+                "actual": {},
+                "evidence_refs": {"type": "array", "items": {"type": "string"}},
+                "failure_code": {"type": "string"},
+                "message": {"type": "string"}
+              },
+              "additionalProperties": false
+            }
+          },
+          "evaluator_results": {
+            "type": "array",
+            "items": {"$ref": "#/properties/results/items/$defs/evaluatorResult"}
+          }
+        },
+        "$defs": {
+          "score": {
+            "type": "object",
+            "required": ["value", "minimum", "maximum", "threshold", "label", "passed"],
+            "properties": {
+              "value": {"type": "number"},
+              "minimum": {"type": "number"},
+              "maximum": {"type": "number"},
+              "threshold": {"type": ["number", "null"]},
+              "label": {"type": "string"},
+              "passed": {"type": ["boolean", "null"]}
+            },
+            "additionalProperties": false
+          },
+          "evaluationError": {
+            "type": "object",
+            "required": ["code", "message", "evaluator", "transient", "details"],
+            "properties": {
+              "code": {"type": "string", "minLength": 1},
+              "message": {"type": "string"},
+              "evaluator": {"type": "string"},
+              "transient": {"type": "boolean"},
+              "details": {"type": "object"}
+            },
+            "additionalProperties": false
+          },
+          "evaluatorResult": {
+            "type": "object",
+            "required": [
+              "result_id", "evaluator", "evaluator_version", "score", "output",
+              "rationale", "evidence_refs", "configuration", "judge", "input_hash",
+              "prompt_hash", "latency_ms", "token_usage", "cost", "error", "metadata"
+            ],
+            "properties": {
+              "result_id": {"type": "string", "minLength": 1},
+              "evaluator": {"type": "string", "minLength": 1},
+              "evaluator_version": {"type": "string", "minLength": 1},
+              "score": {"oneOf": [{"$ref": "#/properties/results/items/$defs/score"}, {"type": "null"}]},
+              "output": {},
+              "rationale": {"type": "string"},
+              "evidence_refs": {"type": "array", "items": {"type": "string"}},
+              "configuration": {"type": "object"},
+              "judge": {"type": "object"},
+              "input_hash": {"type": "string"},
+              "prompt_hash": {"type": "string"},
+              "latency_ms": {"type": "number", "minimum": 0},
+              "token_usage": {
+                "type": "object",
+                "additionalProperties": {"type": "integer", "minimum": 0}
+              },
+              "cost": {"type": ["string", "null"]},
+              "error": {"oneOf": [{"$ref": "#/properties/results/items/$defs/evaluationError"}, {"type": "null"}]},
+              "metadata": {"type": "object"}
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

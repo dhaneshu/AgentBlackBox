@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-09-18T12:00:00.000Z" agent="Copilot" version="24.7.17">
+  <diagram id="abb-platform" name="Platform Architecture">
+    <mxGraphModel dx="1920" dy="1080" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1080" background="#F6F8FC" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="AGENT BLACK BOX" style="text;html=1;align=left;verticalAlign=middle;fontSize=30;fontStyle=1;fontColor=#172554;letterSpacing=2;" vertex="1" parent="1">
+          <mxGeometry x="55" y="28" width="420" height="42" as="geometry"/>
+        </mxCell>
+        <mxCell id="subtitle" value="Evaluation, observability and regression engineering for AI agents" style="text;html=1;align=left;verticalAlign=middle;fontSize=15;fontColor=#475569;" vertex="1" parent="1">
+          <mxGeometry x="58" y="70" width="650" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="badge1" value="LOCAL-FIRST" style="rounded=1;arcSize=30;whiteSpace=wrap;html=1;fillColor=#E0F2FE;strokeColor=#0284C7;fontColor=#075985;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1475" y="38" width="120" height="32" as="geometry"/>
+        </mxCell>
+        <mxCell id="badge2" value="SELF-HOSTED" style="rounded=1;arcSize=30;whiteSpace=wrap;html=1;fillColor=#EDE9FE;strokeColor=#7C3AED;fontColor=#5B21B6;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1608" y="38" width="120" height="32" as="geometry"/>
+        </mxCell>
+        <mxCell id="badge3" value="EXTENSIBLE" style="rounded=1;arcSize=30;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontColor=#166534;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1741" y="38" width="120" height="32" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="users-zone" value="USERS &amp; AUTOMATION" style="swimlane;html=1;rounded=1;arcSize=10;startSize=32;horizontal=1;fillColor=#FFFFFF;swimlaneFillColor=#E2E8F0;strokeColor=#94A3B8;strokeWidth=1.5;fontColor=#334155;fontSize=12;fontStyle=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="55" y="125" width="220" height="760" as="geometry"/>
+        </mxCell>
+        <mxCell id="developer" value="&lt;b&gt;Developer&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#64748B&quot;&gt;Local authoring &amp; debugging&lt;/font&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#EFF6FF;gradientColor=#DBEAFE;strokeColor=#3B82F6;strokeWidth=2;fontColor=#1E3A8A;fontSize=13;shadow=1;" vertex="1" parent="users-zone">
+          <mxGeometry x="25" y="65" width="170" height="74" as="geometry"/>
+        </mxCell>
+        <mxCell id="qa" value="&lt;b&gt;AI Quality Team&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#64748B&quot;&gt;Evaluation &amp; review&lt;/font&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#F5F3FF;gradientColor=#EDE9FE;strokeColor=#8B5CF6;strokeWidth=2;fontColor=#4C1D95;fontSize=13;shadow=1;" vertex="1" parent="users-zone">
+          <mxGeometry x="25" y="170" width="170" height="74" as="geometry"/>
+        </mxCell>
+        <mxCell id="operator" value="&lt;b&gt;Platform Operator&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#64748B&quot;&gt;Security &amp; operations&lt;/font&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#ECFDF5;gradientColor=#D1FAE5;strokeColor=#10B981;strokeWidth=2;fontColor=#065F46;fontSize=13;shadow=1;" vertex="1" parent="users-zone">
+          <mxGeometry x="25" y="275" width="170" height="74" as="geometry"/>
+        </mxCell>
+        <mxCell id="cicd" value="&lt;b&gt;CI / CD Pipeline&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#64748B&quot;&gt;Automated release gates&lt;/font&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#FFF7ED;gradientColor=#FFEDD5;strokeColor=#F97316;strokeWidth=2;fontColor=#9A3412;fontSize=13;shadow=1;" vertex="1" parent="users-zone">
+          <mxGeometry x="25" y="380" width="170" height="74" as="geometry"/>
+        </mxCell>
+        <mxCell id="agents" value="&lt;b&gt;Agent Applications&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#64748B&quot;&gt;RAG • tools • workflows&lt;/font&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#FEF2F2;gradientColor=#FEE2E2;strokeColor=#EF4444;strokeWidth=2;fontColor=#991B1B;fontSize=13;shadow=1;" vertex="1" parent="users-zone">
+          <mxGeometry x="25" y="520" width="170" height="82" as="geometry"/>
+        </mxCell>
+        <mxCell id="modelproviders" value="&lt;b&gt;Model &amp; Agent Providers&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#64748B&quot;&gt;Azure OpenAI • Foundry • others&lt;/font&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#F8FAFC;gradientColor=#E2E8F0;strokeColor=#64748B;strokeWidth=2;fontColor=#334155;fontSize=12;shadow=1;" vertex="1" parent="users-zone">
+          <mxGeometry x="25" y="635" width="170" height="82" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="platform-zone" value="AGENT BLACK BOX PLATFORM" style="swimlane;html=1;rounded=1;arcSize=8;startSize=36;horizontal=1;fillColor=#172554;swimlaneFillColor=#FFFFFF;strokeColor=#1E3A8A;strokeWidth=2;fontColor=#FFFFFF;fontSize=13;fontStyle=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="310" y="125" width="1140" height="760" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="experience-zone" value="EXPERIENCE LAYER" style="swimlane;html=1;rounded=1;arcSize=8;startSize=28;horizontal=1;fillColor=#F8FAFC;swimlaneFillColor=#DBEAFE;strokeColor=#93C5FD;fontColor=#1E40AF;fontSize=11;fontStyle=1;" vertex="1" parent="platform-zone">
+          <mxGeometry x="25" y="55" width="1090" height="115" as="geometry"/>
+        </mxCell>
+        <mxCell id="web" value="&lt;b&gt;Web Experience&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#64748B&quot;&gt;React • dashboards • trace waterfall&lt;/font&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#FFFFFF;gradientColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=2;fontColor=#1E3A8A;fontSize=13;shadow=1;" vertex="1" parent="experience-zone">
+          <mxGeometry x="25" y="42" width="245" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="remotecli" value="&lt;b&gt;CLI &amp; Python SDK&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#64748B&quot;&gt;Local / remote profiles • CI gates&lt;/font&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#FFFFFF;gradientColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=2;fontColor=#1E3A8A;fontSize=13;shadow=1;" vertex="1" parent="experience-zone">
+          <mxGeometry x="290" y="42" width="245" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="openapi" value="&lt;b&gt;Versioned API&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#64748B&quot;&gt;REST /api/v1 • OpenAPI • SSE&lt;/font&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#FFFFFF;gradientColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=2;fontColor=#1E3A8A;fontSize=13;shadow=1;" vertex="1" parent="experience-zone">
+          <mxGeometry x="555" y="42" width="245" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="oidc" value="&lt;b&gt;Identity &amp; Access&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#64748B&quot;&gt;OIDC • Entra • workspace RBAC&lt;/font&gt;" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;fillColor=#FFFFFF;gradientColor=#F5F3FF;strokeColor=#7C3AED;strokeWidth=2;fontColor=#4C1D95;fontSize=13;shadow=1;" vertex="1" parent="experience-zone">
+          <mxGeometry x="820" y="42" width="245" height="55" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="control-zone" value="CONTROL &amp; ORCHESTRATION" style="swimlane;html=1;rounded=1;arcSize=8;startSize=28;horizontal=1;fillColor=#F8FAFC;swimlaneFillColor=#EDE9FE;strokeColor=#C4B5FD;fontColor=#5B21B6;fontSize=11;fontStyle=1;" vertex="1" parent="platform-zone">
+          <mxGeometry x="25" y="190" width="1090" height="155" as="geometry"/>
+        </mxCell>
+        <mxCell id="workspace" value="&lt;b&gt;Workspace Services&lt;/b&gt;&lt;br&gt;Projects • datasets • versions" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#8B5CF6;strokeWidth=1.5;fontColor=#4C1D95;fontSize=12;shadow=1;" vertex="1" parent="control-zone">
+          <mxGeometry x="25" y="43" width="195" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="runservice" value="&lt;b&gt;Run Orchestration&lt;/b&gt;&lt;br&gt;Experiments • retries • cancellation" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#8B5CF6;strokeWidth=1.5;fontColor=#4C1D95;fontSize=12;shadow=1;" vertex="1" parent="control-zone">
+          <mxGeometry x="235" y="43" width="195" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="ingest" value="&lt;b&gt;Trace Ingestion&lt;/b&gt;&lt;br&gt;Validate • redact • project" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#8B5CF6;strokeWidth=1.5;fontColor=#4C1D95;fontSize=12;shadow=1;" vertex="1" parent="control-zone">
+          <mxGeometry x="445" y="43" width="195" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="jobs" value="&lt;b&gt;Durable Job Engine&lt;/b&gt;&lt;br&gt;Leases • heartbeat • dead letter" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#8B5CF6;strokeWidth=1.5;fontColor=#4C1D95;fontSize=12;shadow=1;" vertex="1" parent="control-zone">
+          <mxGeometry x="655" y="43" width="195" height="75" as="geometry"/>
+        </mxCell>
+        <mxCell id="governance" value="&lt;b&gt;Governance Services&lt;/b&gt;&lt;br&gt;Review • retention • audit" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#8B5CF6;strokeWidth=1.5;fontColor=#4C1D95;fontSize=12;shadow=1;" vertex="1" parent="control-zone">
+          <mxGeometry x="865" y="43" width="200" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="engine-zone" value="EVALUATION &amp; TRACE ENGINE" style="swimlane;html=1;rounded=1;arcSize=8;startSize=28;horizontal=1;fillColor=#F8FAFC;swimlaneFillColor=#DCFCE7;strokeColor=#86EFAC;fontColor=#166534;fontSize=11;fontStyle=1;" vertex="1" parent="platform-zone">
+          <mxGeometry x="25" y="365" width="700" height="250" as="geometry"/>
+        </mxCell>
+        <mxCell id="recorder" value="&lt;b&gt;Flight Recorder&lt;/b&gt;&lt;br&gt;Turns • spans • events • handoffs" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#22C55E;strokeWidth=1.5;fontColor=#166534;fontSize=12;shadow=1;" vertex="1" parent="engine-zone">
+          <mxGeometry x="25" y="45" width="200" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="assertions" value="&lt;b&gt;Assertion Engine&lt;/b&gt;&lt;br&gt;Output • tools • policy • budgets" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#22C55E;strokeWidth=1.5;fontColor=#166534;fontSize=12;shadow=1;" vertex="1" parent="engine-zone">
+          <mxGeometry x="250" y="45" width="200" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="evaluators" value="&lt;b&gt;Evaluator Framework&lt;/b&gt;&lt;br&gt;Deterministic • judge • ensemble" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#22C55E;strokeWidth=1.5;fontColor=#166534;fontSize=12;shadow=1;" vertex="1" parent="engine-zone">
+          <mxGeometry x="475" y="45" width="200" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="fixtures" value="&lt;b&gt;Fixtures &amp; Side Effects&lt;/b&gt;&lt;br&gt;Prepare • snapshot • verify • cleanup" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#22C55E;strokeWidth=1.5;fontColor=#166534;fontSize=12;shadow=1;" vertex="1" parent="engine-zone">
+          <mxGeometry x="25" y="140" width="200" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="policies" value="&lt;b&gt;Policy &amp; Redaction&lt;/b&gt;&lt;br&gt;Rules • secrets • compliance" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#22C55E;strokeWidth=1.5;fontColor=#166534;fontSize=12;shadow=1;" vertex="1" parent="engine-zone">
+          <mxGeometry x="250" y="140" width="200" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="compare" value="&lt;b&gt;Regression Intelligence&lt;/b&gt;&lt;br&gt;Replay • rescore • compare • stability" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#22C55E;strokeWidth=1.5;fontColor=#166534;fontSize=12;shadow=1;" vertex="1" parent="engine-zone">
+          <mxGeometry x="475" y="140" width="200" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="adapter-zone" value="INTEGRATION PLANE" style="swimlane;html=1;rounded=1;arcSize=8;startSize=28;horizontal=1;fillColor=#F8FAFC;swimlaneFillColor=#FFEDD5;strokeColor=#FDBA74;fontColor=#9A3412;fontSize=11;fontStyle=1;" vertex="1" parent="platform-zone">
+          <mxGeometry x="745" y="365" width="370" height="250" as="geometry"/>
+        </mxCell>
+        <mxCell id="adapterapi" value="&lt;b&gt;Agent Adapters&lt;/b&gt;&lt;br&gt;In-process • HTTP • Foundry" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F97316;strokeWidth=1.5;fontColor=#9A3412;fontSize=12;shadow=1;" vertex="1" parent="adapter-zone">
+          <mxGeometry x="25" y="45" width="320" height="62" as="geometry"/>
+        </mxCell>
+        <mxCell id="imports" value="&lt;b&gt;Trace Imports &amp; Exports&lt;/b&gt;&lt;br&gt;OTLP • webhooks • JSONL • JUnit • CSV" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F97316;strokeWidth=1.5;fontColor=#9A3412;fontSize=12;shadow=1;" vertex="1" parent="adapter-zone">
+          <mxGeometry x="25" y="125" width="320" height="62" as="geometry"/>
+        </mxCell>
+        <mxCell id="plugins" value="&lt;b&gt;Extension Contracts&lt;/b&gt;&lt;br&gt;Evaluators • policies • stores • pricing" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#F97316;strokeWidth=1.5;fontColor=#9A3412;fontSize=12;shadow=1;" vertex="1" parent="adapter-zone">
+          <mxGeometry x="25" y="200" width="320" height="38" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="data-zone" value="DURABLE DATA PLANE" style="swimlane;html=1;rounded=1;arcSize=8;startSize=28;horizontal=1;fillColor=#F8FAFC;swimlaneFillColor=#FEF3C7;strokeColor=#FCD34D;fontColor=#92400E;fontSize=11;fontStyle=1;" vertex="1" parent="platform-zone">
+          <mxGeometry x="25" y="635" width="1090" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="postgres" value="&lt;b&gt;PostgreSQL 16&lt;/b&gt;&lt;br&gt;Workspace data • jobs • RLS" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;fillColor=#FFFFFF;gradientColor=#FEF3C7;strokeColor=#D97706;strokeWidth=2;fontColor=#78350F;fontSize=12;shadow=1;" vertex="1" parent="data-zone">
+          <mxGeometry x="35" y="38" width="245" height="52" as="geometry"/>
+        </mxCell>
+        <mxCell id="artifacts" value="&lt;b&gt;Artifact Store&lt;/b&gt;&lt;br&gt;Local / Blob • SHA-256 • signed access" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;fillColor=#FFFFFF;gradientColor=#FEF3C7;strokeColor=#D97706;strokeWidth=2;fontColor=#78350F;fontSize=12;shadow=1;" vertex="1" parent="data-zone">
+          <mxGeometry x="320" y="38" width="245" height="52" as="geometry"/>
+        </mxCell>
+        <mxCell id="evidence" value="&lt;b&gt;Immutable Evidence&lt;/b&gt;&lt;br&gt;Raw events • versions • audit trail" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;gradientColor=#FEF3C7;strokeColor=#D97706;strokeWidth=2;fontColor=#78350F;fontSize=12;shadow=1;" vertex="1" parent="data-zone">
+          <mxGeometry x="605" y="38" width="210" height="52" as="geometry"/>
+        </mxCell>
+        <mxCell id="backup" value="&lt;b&gt;Backup &amp; Recovery&lt;/b&gt;&lt;br&gt;Migration • restore • retention" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#FFFFFF;gradientColor=#FEF3C7;strokeColor=#D97706;strokeWidth=2;fontColor=#78350F;fontSize=12;shadow=1;" vertex="1" parent="data-zone">
+          <mxGeometry x="855" y="38" width="210" height="52" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ops-zone" value="TRUST, OBSERVABILITY &amp; DELIVERY" style="swimlane;html=1;rounded=1;arcSize=8;startSize=32;horizontal=1;fillColor=#0F766E;swimlaneFillColor=#F0FDFA;strokeColor=#115E59;strokeWidth=2;fontColor=#FFFFFF;fontSize=12;fontStyle=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1485" y="125" width="376" height="760" as="geometry"/>
+        </mxCell>
+        <mxCell id="security" value="&lt;b&gt;Zero-Trust Security&lt;/b&gt;&lt;br&gt;&lt;br&gt;TLS &amp; managed identity&lt;br&gt;OIDC / RBAC / tenant isolation&lt;br&gt;Secret detection &amp; redaction&lt;br&gt;Rate limits &amp; SSRF protection&lt;br&gt;Legal hold &amp; immutable audit" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=left;spacingLeft=18;fillColor=#F0FDFA;gradientColor=#CCFBF1;strokeColor=#14B8A6;strokeWidth=2;fontColor=#134E4A;fontSize=13;shadow=1;" vertex="1" parent="ops-zone">
+          <mxGeometry x="28" y="65" width="320" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="observability" value="&lt;b&gt;OpenTelemetry Operations&lt;/b&gt;&lt;br&gt;&lt;br&gt;Application traces &amp; metrics&lt;br&gt;Availability &amp; p95 latency&lt;br&gt;Ingestion failures &amp; backlog&lt;br&gt;Evaluation quality &amp; spend&lt;br&gt;Alerts, dashboards &amp; runbooks" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=left;spacingLeft=18;fillColor=#ECFEFF;gradientColor=#CFFAFE;strokeColor=#06B6D4;strokeWidth=2;fontColor=#164E63;fontSize=13;shadow=1;" vertex="1" parent="ops-zone">
+          <mxGeometry x="28" y="275" width="320" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="delivery" value="&lt;b&gt;Secure Delivery&lt;/b&gt;&lt;br&gt;&lt;br&gt;Quality gates &amp; golden traces&lt;br&gt;PostgreSQL integration tests&lt;br&gt;Container &amp; dependency scans&lt;br&gt;SBOM &amp; signed provenance&lt;br&gt;Zero-downtime deployment" style="rounded=1;arcSize=12;whiteSpace=wrap;html=1;align=left;spacingLeft=18;fillColor=#F8FAFC;gradientColor=#E2E8F0;strokeColor=#64748B;strokeWidth=2;fontColor=#334155;fontSize=13;shadow=1;" vertex="1" parent="ops-zone">
+          <mxGeometry x="28" y="485" width="320" height="180" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="verdicts" value="QUALITY SIGNALS" style="text;html=1;align=left;fontSize=12;fontStyle=1;fontColor=#475569;" vertex="1" parent="1">
+          <mxGeometry x="55" y="925" width="140" height="25" as="geometry"/>
+        </mxCell>
+        <mxCell id="v1" value="✓ CORRECT" style="rounded=1;arcSize=25;whiteSpace=wrap;html=1;fillColor=#DCFCE7;strokeColor=#16A34A;fontColor=#166534;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="200" y="918" width="145" height="38" as="geometry"/>
+        </mxCell>
+        <mxCell id="v2" value="✓ CORRECTLY REFUSED" style="rounded=1;arcSize=25;whiteSpace=wrap;html=1;fillColor=#DBEAFE;strokeColor=#2563EB;fontColor=#1E40AF;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="360" y="918" width="195" height="38" as="geometry"/>
+        </mxCell>
+        <mxCell id="v3" value="! HALLUCINATED" style="rounded=1;arcSize=25;whiteSpace=wrap;html=1;fillColor=#FEE2E2;strokeColor=#DC2626;fontColor=#991B1B;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="570" y="918" width="165" height="38" as="geometry"/>
+        </mxCell>
+        <mxCell id="v4" value="! OVER-REFUSED" style="rounded=1;arcSize=25;whiteSpace=wrap;html=1;fillColor=#FFEDD5;strokeColor=#EA580C;fontColor=#9A3412;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="750" y="918" width="165" height="38" as="geometry"/>
+        </mxCell>
+        <mxCell id="v5" value="× WRONG" style="rounded=1;arcSize=25;whiteSpace=wrap;html=1;fillColor=#FEF3C7;strokeColor=#D97706;fontColor=#92400E;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="930" y="918" width="130" height="38" as="geometry"/>
+        </mxCell>
+        <mxCell id="footer" value="Every agent decision — captured, explainable, replayable and measurable." style="text;html=1;align=right;verticalAlign=middle;fontSize=13;fontStyle=2;fontColor=#64748B;" vertex="1" parent="1">
+          <mxGeometry x="1210" y="918" width="650" height="38" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e-user-web" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="developer" target="remotecli"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-qa-web" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#7C3AED;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="qa" target="web"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-op-web" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#10B981;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="operator" target="web"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-ci-api" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#F97316;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="cicd" target="openapi"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-ui-api" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="web" target="openapi"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-cli-api" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="remotecli" target="openapi"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-auth-api" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#7C3AED;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="oidc" target="openapi"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-api-control" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6D28D9;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="openapi" target="runservice"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-run-jobs" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6D28D9;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="runservice" target="jobs"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-jobs-eval" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#16A34A;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="jobs" target="evaluators"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-ingest-rec" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#16A34A;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="ingest" target="recorder"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-agent-adapter" value="execute / observe" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#EA580C;strokeWidth=2;endArrow=block;endFill=1;fontColor=#9A3412;fontSize=10;" edge="1" parent="1" source="agents" target="adapterapi"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-model-adapter" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#64748B;strokeWidth=2;dashed=1;endArrow=block;endFill=1;" edge="1" parent="1" source="modelproviders" target="adapterapi"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-adapter-rec" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#EA580C;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="adapterapi" target="recorder"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-import-ingest" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#EA580C;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="imports" target="ingest"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-eval-assert" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#16A34A;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="assertions" target="evaluators"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-eval-compare" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#16A34A;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="evaluators" target="compare"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-control-db" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#D97706;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="workspace" target="postgres"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-job-db" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#D97706;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="jobs" target="postgres"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-ing-art" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#D97706;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="ingest" target="artifacts"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-data-ops" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#0F766E;strokeWidth=2;dashed=1;endArrow=block;endFill=1;" edge="1" parent="1" source="postgres" target="observability"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-platform-sec" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#0F766E;strokeWidth=2;dashed=1;endArrow=block;endFill=1;" edge="1" parent="1" source="oidc" target="security"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentblackbox.dev/schemas/import-2.0.schema.json",
+  "title": "Agent Black Box Declarative Import 2.0",
+  "type": "object",
+  "required": ["schema_version", "fields"],
+  "properties": {
+    "schema_version": {"const": "2.0"},
+    "fields": {
+      "type": "object",
+      "additionalProperties": {"type": "string"}
+    },
+    "defaults": {"type": "object"},
+    "source_schema": {"type": "object"},
+    "payload_limit_bytes": {"type": "integer", "minimum": 1}
+  },
+  "additionalProperties": false
+}

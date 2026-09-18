@@ -11,17 +11,20 @@
 from __future__ import annotations
 
 import argparse
+import asyncio
+import json
 import sys
+import warnings
 from pathlib import Path
 
 from blackbox.agents import REGISTRY, build
 from blackbox.corpus import Corpus
-from blackbox.policy import PolicySet
-from blackbox.replay import Run, determinism_check, replay, run_suite
+from blackbox.domain.policy import PolicySet
+from blackbox.replay import Run, determinism_check, replay, run_suite, stability_check
 from blackbox.report import render_comparison, render_run, render_trace
-from blackbox.score import compare, score_run, write_score
-from blackbox.suite import load_suite, summarise, validate_suite
-from blackbox.trace import load_traces
+from blackbox.domain.result import compare, score_run, write_score
+from blackbox.domain.suite import load_suite, summarise, validate_suite
+from blackbox.domain.trace import load_traces
 
 DEFAULT_CORPUS = "samples/corpus"
 DEFAULT_SUITE = "samples/suites/northwind.jsonl"
@@ -29,6 +32,12 @@ DEFAULT_OUT = "out"
 
 
 def main(argv: list[str] | None = None) -> int:
+    warnings.warn(
+        "The Phase 1 CLI is a compatibility interface; its commands remain "
+        "supported while versioned SDK interfaces are introduced",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     parser = argparse.ArgumentParser(
         prog="blackbox",
         description="Record, replay and measure enterprise agent runs.",
@@ -42,6 +51,10 @@ def main(argv: list[str] | None = None) -> int:
     rec.add_argument("--evidence-floor", type=float, default=0.35)
     rec.add_argument("--token-budget", type=int, default=0)
     rec.add_argument("--quiet", action="store_true")
+    rec.add_argument(
+        "--approve-destructive-fixtures", action="store_true",
+        help="explicitly approve suite fixtures declared destructive",
+    )
 
     ins = sub.add_parser("inspect", help="show the readout for one recorded case")
     _add_common(ins, _common)
@@ -57,6 +70,7 @@ def main(argv: list[str] | None = None) -> int:
     rep.add_argument("--evidence-floor", type=float, default=0.35)
     rep.add_argument("--token-budget", type=int, default=0)
     rep.add_argument("--no-color", action="store_true")
+    rep.add_argument("--approve-destructive-fixtures", action="store_true")
 
     cmp_ = sub.add_parser("compare", help="compare two recorded runs case by case")
     _add_common(cmp_, _common)
@@ -70,6 +84,38 @@ def main(argv: list[str] | None = None) -> int:
     demo = sub.add_parser("demo", help="the whole story on the sample project")
     _add_common(demo, _common)
     demo.add_argument("--no-color", action="store_true")
+    demo.add_argument(
+        "--short",
+        action="store_true",
+        help="show the compact hackathon storyline",
+    )
+    demo.add_argument("--approve-destructive-fixtures", action="store_true")
+
+    async_run = sub.add_parser(
+        "run-async", help="run a local agent with bounded async concurrency"
+    )
+    _add_common(async_run, _common)
+    async_run.add_argument("--agent", default="grounded-v1", choices=sorted(REGISTRY))
+    async_run.add_argument("--concurrency", type=int, default=4)
+    async_run.add_argument("--timeout", type=float, default=30.0)
+    async_run.add_argument("--retries", type=int, default=2)
+    async_run.add_argument("--seed", type=int)
+
+    imp = sub.add_parser(
+        "import-traces", help="import Foundry, OTLP, or mapped JSONL traces"
+    )
+    imp.add_argument("--format", choices=("jsonl", "foundry", "otlp"), required=True)
+    imp.add_argument("--input", required=True)
+    imp.add_argument("--output", required=True)
+    imp.add_argument("--mapping", help="JSON file mapping destination fields to source paths")
+    imp.add_argument("--max-bytes", type=int, default=4_194_304)
+
+    rescore = sub.add_parser(
+        "rescore", help="rescore stored traces without calling an agent"
+    )
+    _add_common(rescore, _common)
+    rescore.add_argument("--run", required=True)
+    rescore.add_argument("--output-run-id", default="")
 
     args = parser.parse_args(argv)
     return _DISPATCH[args.command](args)
@@ -120,11 +166,18 @@ def cmd_record(args) -> int:
             print(f"ERROR  {error}", file=sys.stderr)
         return 1
 
-    run = run_suite(args.agent, cases, corpus, _policies(args))
+    run = run_suite(
+        args.agent, cases, corpus, _policies(args),
+        approve_destructive_fixtures=args.approve_destructive_fixtures,
+    )
     traces_path = run.save(Path(args.out) / "runs")
 
     result = score_run(run, cases)
-    result.determinism = determinism_check(args.agent, cases, corpus, _policies(args))
+    result.stability = stability_check(
+        args.agent, cases, corpus, _policies(args),
+        approve_destructive_fixtures=args.approve_destructive_fixtures,
+    )
+    result.determinism = result.stability["exact_agreement"]
     score_path = write_score(result, Path(args.out) / "scores")
 
     if not args.quiet:
@@ -167,12 +220,19 @@ def cmd_replay(args) -> int:
     recorded = load_traces(_run_path(args.out, args.run))
     before_run = Run(args.run, recorded[0].agent if recorded else "", recorded)
 
-    after_run = replay(before_run, args.agent, cases, corpus, _policies(args))
+    after_run = replay(
+        before_run, args.agent, cases, corpus, _policies(args),
+        approve_destructive_fixtures=args.approve_destructive_fixtures,
+    )
     after_run.save(Path(args.out) / "runs")
 
     before = score_run(before_run, cases)
     after = score_run(after_run, cases)
-    after.determinism = determinism_check(args.agent, cases, corpus, _policies(args))
+    after.stability = stability_check(
+        args.agent, cases, corpus, _policies(args),
+        approve_destructive_fixtures=args.approve_destructive_fixtures,
+    )
+    after.determinism = after.stability["exact_agreement"]
     write_score(after, Path(args.out) / "scores")
 
     colour = False if args.no_color else None
@@ -198,16 +258,26 @@ def cmd_compare(args) -> int:
 
 def cmd_demo(args) -> int:
     """Record a flawed agent, find the failure, replay the fix, report honestly."""
+    if args.short:
+        return _cmd_demo_short(args)
+
     colour = False if args.no_color else None
     corpus, cases = _load(args)
     policies = PolicySet()
     out = Path(args.out)
 
     _beat(1, "An agent is shipped, and a suite is recorded")
-    v1 = run_suite("grounded-v1", cases, corpus, policies, run_id="demo-v1")
+    v1 = run_suite(
+        "grounded-v1", cases, corpus, policies, run_id="demo-v1",
+        approve_destructive_fixtures=args.approve_destructive_fixtures,
+    )
     v1.save(out / "runs")
     before = score_run(v1, cases)
-    before.determinism = determinism_check("grounded-v1", cases, corpus, policies)
+    before.stability = stability_check(
+        "grounded-v1", cases, corpus, policies,
+        approve_destructive_fixtures=args.approve_destructive_fixtures,
+    )
+    before.determinism = before.stability["exact_agreement"]
     write_score(before, out / "scores")
     print(render_run(before, colour=colour))
 
@@ -225,12 +295,19 @@ def cmd_demo(args) -> int:
         )
 
     _beat(3, "The fix is replayed over exactly the same cases")
-    v2 = replay(v1, "grounded-v2", cases, corpus, policies)
+    v2 = replay(
+        v1, "grounded-v2", cases, corpus, policies,
+        approve_destructive_fixtures=args.approve_destructive_fixtures,
+    )
     v2.run_id = "demo-v2"
     v2.save(out / "runs")
     after = score_run(v2, cases)
     after.run_id = "demo-v2"
-    after.determinism = determinism_check("grounded-v2", cases, corpus, policies)
+    after.stability = stability_check(
+        "grounded-v2", cases, corpus, policies,
+        approve_destructive_fixtures=args.approve_destructive_fixtures,
+    )
+    after.determinism = after.stability["exact_agreement"]
     write_score(after, out / "scores")
     print(render_run(after, colour=colour))
 
@@ -255,6 +332,153 @@ def cmd_demo(args) -> int:
     return 0
 
 
+def _cmd_demo_short(args) -> int:
+    """Run the same comparison with a concise, presentation-friendly readout."""
+    corpus, cases = _load(args)
+    policies = PolicySet()
+    out = Path(args.out)
+    fixture_approval = args.approve_destructive_fixtures
+
+    v1 = run_suite(
+        "grounded-v1",
+        cases,
+        corpus,
+        policies,
+        run_id="demo-v1",
+        approve_destructive_fixtures=fixture_approval,
+    )
+    v1.save(out / "runs")
+    before = score_run(v1, cases)
+    write_score(before, out / "scores")
+
+    v2 = replay(
+        v1,
+        "grounded-v2",
+        cases,
+        corpus,
+        policies,
+        approve_destructive_fixtures=fixture_approval,
+    )
+    v2.run_id = "demo-v2"
+    v2.save(out / "runs")
+    after = score_run(v2, cases)
+    after.run_id = "demo-v2"
+    write_score(after, out / "scores")
+    comparison = compare(before, after)
+
+    hallucination = next(
+        result for result in before.results if result.verdict == "hallucinated"
+    )
+    regression = comparison.regressed[0] if comparison.regressed else None
+    percent = lambda value: f"{value:.0%}"
+
+    print("\nAGENT BLACK BOX  |  COMPACT DEMO")
+    print("=" * 72)
+    print(
+        f"1  RECORD   {before.total} cases  |  accuracy {percent(before.accuracy)}  |  "
+        f"hallucination {percent(before.hallucination_rate)}"
+    )
+    print(
+        f"2  TRACE    {hallucination.case_id} hallucinated  |  unsupported answer and citation"
+    )
+    print(
+        f"3  REPLAY   hallucination {percent(before.hallucination_rate)} -> "
+        f"{percent(after.hallucination_rate)}  |  groundedness "
+        f"{percent(before.groundedness)} -> {percent(after.groundedness)}"
+    )
+    print(
+        f"4  COMPARE  {len(comparison.fixed)} fixed  |  "
+        f"{len(comparison.regressed)} regressed  |  "
+        f"{len(comparison.changes) - len(comparison.fixed) - len(comparison.regressed)} unchanged"
+    )
+    if regression:
+        print(
+            f"5  HONEST   {regression.case_id} {regression.before} -> {regression.after}  |  "
+            f"over-refusal {percent(before.over_refusal_rate)} -> "
+            f"{percent(after.over_refusal_rate)}"
+        )
+    print("-" * 72)
+    print("Every agent decision: captured, explainable, replayable, measurable.\n")
+    return 0
+
+
+def cmd_run_async(args) -> int:
+    from blackbox.adapters import InProcessAgentAdapter
+    from blackbox.runtime import AsyncRunner, RunnerConfig
+
+    corpus, cases = _load(args)
+    report = validate_suite(cases, corpus)
+    if not report.ok:
+        for error in report.errors:
+            print(f"ERROR  {error}", file=sys.stderr)
+        return 1
+    adapter = InProcessAgentAdapter(args.agent, corpus, PolicySet())
+    runner = AsyncRunner(adapter, RunnerConfig(
+        concurrency=args.concurrency,
+        timeout_seconds=args.timeout,
+        max_retries=args.retries,
+        random_seed=args.seed,
+    ))
+    run = asyncio.run(runner.run(cases))
+    path = run.save(Path(args.out) / "runs")
+    score = score_run(run, cases)
+    score_path = write_score(score, Path(args.out) / "scores")
+    print(f"Run {run.run_id} ({run.status})")
+    print(f"  traces -> {path}")
+    print(f"  score  -> {score_path}")
+    return 0 if run.status == "completed" else 2
+
+
+def cmd_import_traces(args) -> int:
+    from blackbox.adapters import (
+        DeclarativeMapping,
+        FoundryTraceImporter,
+        JSONLTraceImporter,
+    )
+    from blackbox.domain.trace import save_traces
+    from blackbox.otel import OTLPTraceImporter
+
+    source, target = Path(args.input), Path(args.output)
+    mapping = {}
+    if args.mapping:
+        mapping = json.loads(Path(args.mapping).read_text(encoding="utf-8"))
+        if not isinstance(mapping, dict):
+            raise ValueError("mapping file must contain a JSON object")
+    if args.format == "jsonl":
+        traces = JSONLTraceImporter(
+            DeclarativeMapping(mapping), payload_limit_bytes=args.max_bytes
+        ).import_file(source)
+    elif args.format == "foundry":
+        document = json.loads(source.read_text(encoding="utf-8"))
+        values = document if isinstance(document, list) else [document]
+        traces = FoundryTraceImporter(
+            payload_limit_bytes=args.max_bytes
+        ).import_many(values)
+    else:
+        traces = OTLPTraceImporter(
+            payload_limit_bytes=args.max_bytes
+        ).import_http(source.read_bytes())
+    save_traces(traces, target)
+    print(f"Imported {len(traces)} trace(s) -> {target}")
+    return 0
+
+
+def cmd_rescore(args) -> int:
+    from blackbox.runtime import rescore_traces
+
+    _corpus, cases = _load(args)
+    result = rescore_traces(
+        _run_path(args.out, args.run),
+        cases,
+        run_id=args.output_run_id or f"{args.run}-rescore",
+        output_directory=Path(args.out) / "scores",
+    )
+    print(f"Rescored {result.score.total} trace(s) without invoking an agent")
+    print(f"  source digest -> {result.source_digest}")
+    print(f"  score         -> {result.output_path}")
+    return 0
+
+
 def _beat(number: int, title: str) -> None:
     header = f"\n>> Beat {number}. {title}"
     print(f"\033[1m{header}\033[0m" if sys.stdout.isatty() else header)
@@ -275,6 +499,9 @@ _DISPATCH = {
     "compare": cmd_compare,
     "validate": cmd_validate,
     "demo": cmd_demo,
+    "run-async": cmd_run_async,
+    "import-traces": cmd_import_traces,
+    "rescore": cmd_rescore,
 }
 
 

@@ -21,6 +21,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Protocol
 
+from blackbox.azure_agent import AzureGroundedAgent
 from blackbox.corpus import Corpus, Passage
 from blackbox.recorder import Recorder
 from blackbox.textutil import coverage, sentences, support_ratio
@@ -174,6 +175,7 @@ def _tokens(text: str) -> int:
 REGISTRY: dict[str, type] = {
     "grounded-v1": GroundedV1,
     "grounded-v2": GroundedV2,
+    "azure-grounded": AzureGroundedAgent,
 }
 
 

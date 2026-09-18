@@ -1,0 +1,35 @@
+1
+00:00:00,000 --> 00:00:14,800
+AI agents can sound certain when the evidence is missing. They can invent an answer, attach an unrelated citation, and still pass a polished demo. So, how do we know what actually happened?
+
+2
+00:00:15,000 --> 00:00:29,800
+Agent Black Box is a flight recorder and regression platform for AI agents. It captures what the agent saw, retrieved, called, and concluded, making every decision explainable and replayable.
+
+3
+00:00:30,000 --> 00:00:42,800
+This is the real application running. Eight cases execute locally. The baseline reaches seventy-five percent accuracy, with twenty-five percent hallucination.
+
+4
+00:00:43,000 --> 00:00:54,800
+The agent invents a five percent contractual penalty. The trace shows weak retrieval, then generation, and a citation with zero support.
+
+5
+00:00:55,000 --> 00:01:05,800
+We raise the evidence threshold and replay the cases. Hallucination drops to zero, groundedness reaches one hundred percent, and violations disappear.
+
+6
+00:01:06,000 --> 00:01:14,800
+The agent refuses an answerable question. Two failures improve, one regresses, and over-refusal reaches twelve percent.
+
+7
+00:01:15,000 --> 00:01:29,800
+What makes this different? Evidence comes first. Multi-turn traces, tools, handoffs, policies, model judges, stability trials, OpenTelemetry, and human review explain why results change.
+
+8
+00:01:30,000 --> 00:01:44,800
+Run it on a laptop, in continuous integration, or as a multi-tenant platform with web, API, workers, PostgreSQL, identity, observability, Azure OpenAI, and Microsoft Foundry.
+
+9
+00:01:45,000 --> 00:01:59,800
+Developers ship safer changes. Quality teams find hidden regressions. Leaders receive evidence instead of demo-day confidence. Agent Black Box shows what improved, what broke, and why.

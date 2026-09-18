@@ -1,0 +1,41 @@
+{
+  "schema_version": "2.0",
+  "workspace_id": "local",
+  "project_id": "default",
+  "dataset_id": "northwind",
+  "experiment_id": "experiment-demo",
+  "run_id": "demo",
+  "conversation_id": "conversation-demo-Q-1",
+  "turn_id": "turn-demo-Q-1-1",
+  "case_id": "Q-1",
+  "agent": "grounded-v2",
+  "question": "When is go-live?",
+  "answer": "15 October 2026.",
+  "refused": false,
+  "refusal_reason": "",
+  "steps": [],
+  "citations": [],
+  "violations": [],
+  "config": {},
+  "config_hash": "44136fa355b3",
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "started_at": "2026-09-18T00:00:00+00:00",
+  "trace_id": "4bf92f3577b34da6a3ce929d0e0e4736",
+  "conversations": [],
+  "spans": [],
+  "handoffs": [],
+  "artifacts": [],
+  "usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cached_input_tokens": 0,
+    "tool_calls": 0
+  },
+  "cost": {
+    "amount": "0",
+    "currency": "USD",
+    "provider": ""
+  },
+  "payload_limit_bytes": 1048576
+}

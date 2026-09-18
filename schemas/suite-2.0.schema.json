@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentblackbox.dev/schemas/suite-2.0.schema.json",
+  "title": "Agent Black Box Evaluation Case 2.0",
+  "type": "object",
+  "required": ["schema_version", "id", "messages", "variables", "fixture_refs", "tags", "expected_outcome", "assertions", "evaluators", "timeout_seconds", "metadata"],
+  "properties": {
+    "schema_version": {"const": "2.0"},
+    "id": {"type": "string", "minLength": 1},
+    "messages": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["role", "content"],
+        "properties": {
+          "role": {"enum": ["system", "user", "assistant", "tool", "developer"]},
+          "content": {},
+          "message_id": {"type": "string"},
+          "name": {"type": "string"},
+          "created_at": {"type": "string"},
+          "artifact_refs": {"type": "array"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "variables": {"type": "object"},
+    "fixture_refs": {
+      "type": "array",
+      "items": {
+        "type": "object", "required": ["provider", "name", "destructive", "config"],
+        "properties": {
+          "provider": {"type": "string", "minLength": 1},
+          "name": {"type": "string"},
+          "destructive": {"type": "boolean"},
+          "config": {"type": "object"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "tags": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "expected_outcome": {"enum": ["answer", "refuse"]},
+    "assertions": {
+      "type": "array",
+      "items": {
+        "type": "object", "required": ["type", "expected"],
+        "properties": {
+          "id": {"type": "string"}, "type": {"type": "string", "minLength": 1},
+          "expected": {}, "selector": {"type": "string"}, "options": {"type": "object"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "evaluators": {"type": "array", "items": {"type": "object"}},
+    "timeout_seconds": {"type": ["number", "null"], "exclusiveMinimum": 0},
+    "metadata": {"type": "object"}
+  },
+  "additionalProperties": false
+}

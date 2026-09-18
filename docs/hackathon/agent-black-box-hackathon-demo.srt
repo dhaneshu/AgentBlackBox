@@ -1,0 +1,35 @@
+1
+00:00:00,000 --> 00:00:09,958
+Your AI agent just gave a confident answer. It cited a source, passed the policy check, and sounded completely trustworthy. There was only one problem. The answer was made up.
+
+2
+00:00:10,158 --> 00:00:21,564
+Meet Agent Black Box, a flight recorder and regression engineering platform for AI agents. It captures what the agent saw, retrieved, called, and concluded, so every decision becomes explainable and replayable.
+
+3
+00:00:21,764 --> 00:00:33,935
+Here is a real evaluation run from the project. Eight representative cases test a delivery agent. The baseline reaches seventy-five percent accuracy, but hallucinates on twenty-five percent of the cases and creates four policy violations.
+
+4
+00:00:34,135 --> 00:00:49,540
+For this question, the agent invents a five percent contractual penalty. The trace shows retrieval confidence was only zero point two five. The cited passage says nothing about penalties, yet generation continued. Agent Black Box identifies both an answer without evidence and an unsupported citation.
+
+5
+00:00:49,740 --> 00:01:01,976
+We tighten the evidence threshold and replay exactly the same dataset. Hallucination falls from twenty-five percent to zero. Groundedness reaches one hundred percent, all four policy violations disappear, and token usage also drops.
+
+6
+00:01:02,176 --> 00:01:15,109
+Most evaluation tools would call that a clean win. Agent Black Box catches the hidden regression. The safer agent now refuses an answerable go-live question. Two failures were fixed, one case regressed, and over-refusal increased to twelve percent.
+
+7
+00:01:15,309 --> 00:01:30,112
+The platform supports multi-turn conversations, tool calls, agent handoffs, side-effect fixtures, deterministic assertions, optional model judges, policy plugins, stability trials, OpenTelemetry imports, human review, retention, and immutable audit evidence.
+
+8
+00:01:30,312 --> 00:01:44,697
+Teams can run it offline on a laptop, add it to continuous integration, or operate the complete multi-tenant platform with a web experience, Fast API services, durable workers, PostgreSQL, artifact storage, identity, observability, and an Azure deployment.
+
+9
+00:01:44,897 --> 00:01:54,269
+Agent Black Box turns agent quality from a demo-day opinion into engineering evidence. Fix the failure, replay the evidence, and know what improved, what regressed, and why.

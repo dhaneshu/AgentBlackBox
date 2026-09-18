@@ -11,9 +11,9 @@ from __future__ import annotations
 import os
 import sys
 
-from blackbox.score import Comparison, RunScore
-from blackbox.suite import Case
-from blackbox.trace import Trace
+from blackbox.domain.result import Comparison, RunScore
+from blackbox.domain.suite import Case
+from blackbox.domain.trace import Trace
 
 _WIDTH = 96
 

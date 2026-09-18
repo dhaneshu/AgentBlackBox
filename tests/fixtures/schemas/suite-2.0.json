@@ -1,0 +1,13 @@
+{
+  "schema_version": "2.0",
+  "id": "case-001",
+  "messages": [{"role": "user", "content": "What is the plan?", "message_id": "msg-1", "name": "", "created_at": "2026-09-18T00:00:00+00:00", "artifact_refs": []}],
+  "variables": {},
+  "fixture_refs": [],
+  "tags": ["smoke"],
+  "expected_outcome": "answer",
+  "assertions": [{"type": "text_contains", "expected": "plan"}],
+  "evaluators": [],
+  "timeout_seconds": 30,
+  "metadata": {}
+}

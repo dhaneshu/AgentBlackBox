@@ -6,12 +6,14 @@ which is the entire point of shipping an evaluation harness with the project.
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
 
 from blackbox.cli import main
 from blackbox.corpus import Corpus
+from blackbox.fixtures import DestructiveFixtureApprovalRequired
 from blackbox.policy import PolicySet
 from blackbox.replay import determinism_check, replay, run_suite
 from blackbox.score import compare, score_run
@@ -147,6 +149,43 @@ def test_cli_record_inspect_replay_and_compare(tmp_path, monkeypatch):
     assert main(["compare", "--before", run_id, "--after", after[0].stem,
                  "--out", out, "--no-color"]) == 0
     assert list((Path(out) / "scores").glob("*.json"))
+
+
+def test_cli_short_demo_reports_fix_and_regression(tmp_path, monkeypatch, capsys):
+    monkeypatch.chdir(ROOT)
+
+    assert main(["demo", "--short", "--out", str(tmp_path / "out")]) == 0
+
+    output = capsys.readouterr().out
+    assert "AGENT BLACK BOX  |  COMPACT DEMO" in output
+    assert "hallucination 25% -> 0%" in output
+    assert "2 fixed  |  1 regressed  |  5 unchanged" in output
+    assert "Q-008 correct -> over_refused" in output
+
+
+def test_cli_requires_and_propagates_destructive_fixture_approval(
+    tmp_path, monkeypatch,
+):
+    monkeypatch.chdir(ROOT)
+    suite = tmp_path / "destructive.jsonl"
+    suite.write_text(json.dumps({
+        "schema_version": "2.0",
+        "id": "destructive",
+        "messages": [{"role": "user", "content": "unknown fixture question"}],
+        "expected_outcome": "refuse",
+        "assertions": [{"type": "refusal", "expected": True}],
+        "fixture_refs": [{
+            "provider": "memory", "name": "state", "destructive": True,
+            "config": {"initial": {"value": 1}},
+        }],
+    }) + "\n", encoding="utf-8")
+    command = [
+        "record", "--agent", "grounded-v2", "--suite", str(suite),
+        "--out", str(tmp_path / "out"), "--quiet",
+    ]
+    with pytest.raises(DestructiveFixtureApprovalRequired):
+        main(command)
+    assert main([*command, "--approve-destructive-fixtures"]) == 0
 
 
 def test_cli_validate_passes(monkeypatch):

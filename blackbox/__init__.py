@@ -9,4 +9,4 @@ deterministic simulations so the harness itself can be tested and demonstrated
 offline; an Azure OpenAI adapter is provided for real runs.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

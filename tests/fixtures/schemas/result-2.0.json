@@ -1,0 +1,33 @@
+{
+  "schema_version": "2.0",
+  "generated_at": "2026-09-18T00:00:00+00:00",
+  "run_id": "demo",
+  "agent": "grounded-v2",
+  "total": 1,
+  "accuracy": 1.0,
+  "verdicts": {
+    "correct": 1,
+    "correctly_refused": 0,
+    "hallucinated": 0,
+    "over_refused": 0,
+    "wrong": 0
+  },
+  "hallucination_rate": 0.0,
+  "over_refusal_rate": 0.0,
+  "groundedness": 1.0,
+  "violations": 0,
+  "tokens": 0,
+  "determinism": 1.0,
+  "results": [{
+    "schema_version": "2.0",
+    "evaluation_result_id": "evaluation-26a28c403d8421a3a12f5cf8",
+    "case_id": "Q-1",
+    "verdict": "correct",
+    "reason": "Supported.",
+    "grounded": true,
+    "violations": 0,
+    "tokens": 0,
+    "assertion_results": [],
+    "evaluator_results": []
+  }]
+}

@@ -1,0 +1,83 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agent-black-box"
+version = "0.2.0"
+description = "Replayable, measurable evaluation for enterprise agents"
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+license = { text = "MIT" }
+authors = [{ name = "Dhanesh" }]
+dependencies = [
+  "pydantic>=2.9,<3",
+  "pydantic-settings>=2.5,<3",
+  "python-dotenv>=1.0,<2",
+  "PyYAML>=6.0,<7",
+]
+
+[project.optional-dependencies]
+sdk = ["jsonschema>=4.23,<5"]
+server = [
+  "fastapi>=0.115,<1",
+  "uvicorn[standard]>=0.30,<1",
+  "sqlalchemy>=2.0,<3",
+  "alembic>=1.14,<2",
+  "psycopg[binary]>=3.2,<4",
+]
+azure = [
+  "openai>=1.40,<3",
+  "azure-identity>=1.17,<2",
+  "azure-identity-broker>=1.3,<2",
+  "azure-storage-blob>=12.23,<13",
+]
+http = ["httpx>=0.27,<1"]
+foundry = [
+  "azure-ai-projects>=1.0,<2",
+  "azure-identity>=1.17,<2",
+]
+otel = [
+  "opentelemetry-proto>=1.27,<2",
+  "protobuf>=5,<7",
+]
+integrations = [
+  "agent-black-box[http,foundry,otel]",
+]
+dev = [
+  "agent-black-box[sdk,server,azure,http]",
+  "build>=1.2,<2",
+  "pytest>=8,<9",
+]
+
+[project.scripts]
+blackbox = "blackbox.cli:main"
+blackbox-server = "blackbox_server.__main__:main"
+blackbox-operator = "blackbox_server.operator:main"
+blackbox-worker = "blackbox_server.workers:main"
+
+[project.entry-points."blackbox.adapters"]
+# Third-party adapters register here.
+
+[tool.hatch.build.targets.wheel]
+packages = ["blackbox", "blackbox_server"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"schemas" = "blackbox/schemas"
+"alembic" = "blackbox_server/alembic"
+"alembic.ini" = "blackbox_server/alembic.ini"
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/blackbox",
+  "/blackbox_server",
+  "/alembic",
+  "/alembic.ini",
+  "/schemas",
+  "/tests/fixtures/schemas",
+  "/README.md",
+  "/requirements.txt",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

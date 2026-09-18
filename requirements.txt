@@ -1,5 +1,4 @@
-pytest>=8.0
-
-# Only needed for the Azure OpenAI agent in blackbox/azure_agent.py.
-# The shipped demo agents and the entire harness run offline.
-openai>=1.40
+# Compatibility install input for contributors and existing automation.
+# Canonical dependency metadata lives in pyproject.toml. Keep this equivalent to:
+#   pip install -e ".[dev]"
+-e .[dev]

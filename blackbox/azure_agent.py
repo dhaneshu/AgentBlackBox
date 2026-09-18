@@ -5,19 +5,21 @@ agent that retrieves, decides and answers can be instrumented by handing it a
 `Recorder`, and once it does, every policy, verdict, replay and comparison in
 this project applies to it unchanged.
 
-Requires `AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_API_KEY` and
-`OPENAI_DEPLOYMENT`. The deployment is read from its own variable, so the model
-you configured is the model that runs.
+Requires `AZURE_OPENAI_ENDPOINT` and `OPENAI_DEPLOYMENT`. Authentication uses
+Microsoft Entra ID by default through `DefaultAzureCredential`, so Azure CLI,
+VS Code and managed identity credentials can be used without storing an API
+key. Set `AZURE_OPENAI_AUTH=api_key` and `AZURE_OPENAI_API_KEY` only when key
+authentication is explicitly required.
 
-    python -m blackbox record --agent azure-grounded    # after registering below
+    python -m blackbox record --agent azure-grounded
 """
 
 from __future__ import annotations
 
-import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from blackbox.corpus import Corpus
+from blackbox.config import AzureOpenAISettings, load_azure_openai_settings
 from blackbox.recorder import Recorder
 from blackbox.textutil import support_ratio
 
@@ -46,17 +48,25 @@ class AzureGroundedAgent:
     evidence_floor: float = 0.35
     support_floor: float = 0.60
     top_k: int = 3
-    temperature: float = 0.0
+    temperature: float | None = None
     deployment: str | None = None
+    settings: AzureOpenAISettings | None = field(
+        default=None, repr=False, compare=False
+    )
+
+    def _settings(self) -> AzureOpenAISettings:
+        return self.settings or load_azure_openai_settings()
 
     def config(self) -> dict:
+        settings = self._settings()
         return {
             "agent": self.name,
             "evidence_floor": self.evidence_floor,
             "support_floor": self.support_floor,
             "top_k": self.top_k,
             "temperature": self.temperature,
-            "deployment": self.deployment or os.environ.get("OPENAI_DEPLOYMENT", ""),
+            "deployment": self.deployment or settings.deployment or "",
+            "auth": settings.auth,
             "refuses": True,
         }
 
@@ -116,33 +126,40 @@ class AzureGroundedAgent:
     def _complete(self, prompt: str) -> tuple[str, int, int]:
         from openai import AzureOpenAI
 
-        endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
-        api_key = os.environ.get("AZURE_OPENAI_API_KEY")
-        model = self.deployment or os.environ.get("OPENAI_DEPLOYMENT")
-        missing = [
-            name
-            for name, value in (
-                ("AZURE_OPENAI_ENDPOINT", endpoint),
-                ("AZURE_OPENAI_API_KEY", api_key),
-                ("OPENAI_DEPLOYMENT", model),
-            )
-            if not value
-        ]
-        if missing:
-            raise RuntimeError("Missing environment variable(s): " + ", ".join(missing))
+        settings = self._settings()
+        model = settings.require_runtime(self.deployment)
+        client_options = {
+            "azure_endpoint": settings.endpoint,
+            "api_version": settings.api_version,
+        }
+        if settings.auth == "entra":
+            from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
-        client = AzureOpenAI(
-            azure_endpoint=endpoint,
-            api_key=api_key,
-            api_version=os.environ.get("AZURE_OPENAI_API_VERSION", "2024-10-21"),
-        )
-        response = client.chat.completions.create(
-            model=model,
-            messages=[
+            tenant_id = settings.tenant_id
+            credential = DefaultAzureCredential(
+                visual_studio_code_tenant_id=tenant_id,
+                broker_tenant_id=tenant_id,
+            )
+            client_options["azure_ad_token_provider"] = get_bearer_token_provider(
+                credential, "https://cognitiveservices.azure.com/.default"
+            )
+        else:
+            assert settings.api_key is not None
+            client_options["api_key"] = settings.api_key.get_secret_value()
+
+        client = AzureOpenAI(**client_options)
+        request = {
+            "model": model,
+            "messages": [
                 {"role": "system", "content": _SYSTEM},
                 {"role": "user", "content": prompt},
             ],
-            temperature=self.temperature,
+        }
+        if self.temperature is not None:
+            request["temperature"] = self.temperature
+
+        response = client.chat.completions.create(
+            **request,
         )
         usage = response.usage
         return (
@@ -155,8 +172,8 @@ class AzureGroundedAgent:
 def register() -> None:
     """Make the Azure agent selectable from the CLI.
 
-    Not registered by default: the CLI's `--agent` choices should only offer
-    agents that work without credentials, so that a fresh clone runs.
+    Registration does not authenticate or make a network call; those happen
+    only when the agent is selected for a run.
     """
     from blackbox.agents import REGISTRY
 

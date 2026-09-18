@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentblackbox.dev/schemas/trace-2.0.schema.json",
+  "title": "Agent Black Box Trace 2.0",
+  "type": "object",
+  "required": [
+    "schema_version", "workspace_id", "project_id", "dataset_id",
+    "experiment_id", "run_id", "conversation_id", "turn_id", "case_id",
+    "agent", "question", "answer", "refused", "refusal_reason", "steps",
+    "citations", "violations", "config", "config_hash", "tokens_in",
+    "tokens_out", "started_at", "trace_id", "conversations", "spans",
+    "handoffs", "artifacts", "usage", "cost", "payload_limit_bytes"
+  ],
+  "properties": {
+    "schema_version": {"const": "2.0"},
+    "workspace_id": {"type": "string", "minLength": 1},
+    "project_id": {"type": "string", "minLength": 1},
+    "dataset_id": {"type": "string", "minLength": 1},
+    "experiment_id": {"type": "string", "minLength": 1},
+    "run_id": {"type": "string"},
+    "conversation_id": {"type": "string", "minLength": 1},
+    "turn_id": {"type": "string", "minLength": 1},
+    "case_id": {"type": "string"},
+    "agent": {"type": "string"},
+    "question": {"type": "string"},
+    "answer": {"type": "string"},
+    "refused": {"type": "boolean"},
+    "refusal_reason": {"type": "string"},
+    "steps": {"type": "array", "items": {"$ref": "#/$defs/step"}},
+    "citations": {"type": "array", "items": {"type": "object"}},
+    "violations": {"type": "array", "items": {"type": "object"}},
+    "config": {"type": "object"},
+    "config_hash": {"type": "string", "pattern": "^[a-f0-9]{12}$"},
+    "tokens_in": {"type": "integer", "minimum": 0},
+    "tokens_out": {"type": "integer", "minimum": 0},
+    "started_at": {"type": "string"},
+    "trace_id": {"$ref": "#/$defs/id"},
+    "conversations": {"type": "array", "items": {"$ref": "#/$defs/conversation"}},
+    "spans": {"type": "array", "items": {"$ref": "#/$defs/span"}},
+    "handoffs": {"type": "array", "items": {"$ref": "#/$defs/handoff"}},
+    "artifacts": {"type": "array", "items": {"$ref": "#/$defs/artifact"}},
+    "usage": {"$ref": "#/$defs/usage"},
+    "cost": {"$ref": "#/$defs/cost"},
+    "payload_limit_bytes": {"type": "integer", "minimum": 1}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "ULID, W3C trace/span ID, or preserved legacy identifier"
+    },
+    "step": {
+      "type": "object",
+      "required": ["index", "kind", "name", "summary", "detail"],
+      "properties": {
+        "index": {"type": "integer", "minimum": 0},
+        "kind": {"type": "string"}, "name": {"type": "string"},
+        "summary": {"type": "string"}, "detail": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
+    "artifact": {
+      "type": "object",
+      "required": ["artifact_id", "uri", "digest", "media_type", "size_bytes", "name"],
+      "properties": {
+        "artifact_id": {"$ref": "#/$defs/id"}, "uri": {"type": "string"},
+        "digest": {"type": "string"}, "media_type": {"type": "string"},
+        "size_bytes": {"type": ["integer", "null"], "minimum": 0},
+        "name": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "usage": {
+      "type": "object",
+      "required": ["input_tokens", "output_tokens", "cached_input_tokens", "tool_calls"],
+      "properties": {
+        "input_tokens": {"type": "integer", "minimum": 0},
+        "output_tokens": {"type": "integer", "minimum": 0},
+        "cached_input_tokens": {"type": "integer", "minimum": 0},
+        "tool_calls": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "cost": {
+      "type": "object",
+      "required": ["amount", "currency", "provider"],
+      "properties": {
+        "amount": {"type": "string", "pattern": "^[0-9]+(?:\\.[0-9]+)?$"},
+        "currency": {"type": "string"}, "provider": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "error": {
+      "type": ["object", "null"],
+      "required": ["type", "message", "stack", "retryable", "code"],
+      "properties": {
+        "type": {"type": "string"}, "message": {"type": "string"},
+        "stack": {"type": "string"}, "retryable": {"type": "boolean"},
+        "code": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "message": {
+      "type": "object",
+      "required": ["message_id", "role", "content", "name", "created_at", "artifact_refs"],
+      "properties": {
+        "message_id": {"$ref": "#/$defs/id"},
+        "role": {"enum": ["system", "user", "assistant", "tool", "developer"]},
+        "content": {}, "name": {"type": "string"}, "created_at": {"type": "string"},
+        "artifact_refs": {"type": "array", "items": {"$ref": "#/$defs/artifact"}}
+      },
+      "additionalProperties": false
+    },
+    "turn": {
+      "type": "object",
+      "required": ["conversation_id", "agent_id", "turn_id", "messages", "span_ids",
+        "status", "started_at", "ended_at", "start_ns", "end_ns", "duration_ns", "error"],
+      "properties": {
+        "conversation_id": {"$ref": "#/$defs/id"}, "agent_id": {"type": "string"},
+        "turn_id": {"$ref": "#/$defs/id"},
+        "messages": {"type": "array", "items": {"$ref": "#/$defs/message"}},
+        "span_ids": {"type": "array", "items": {"$ref": "#/$defs/id"}},
+        "status": {"enum": ["active", "completed", "failed", "cancelled"]},
+        "started_at": {"type": "string"}, "ended_at": {"type": "string"},
+        "start_ns": {"type": "integer", "minimum": 0},
+        "end_ns": {"type": "integer", "minimum": 0},
+        "duration_ns": {"type": "integer", "minimum": 0},
+        "error": {"$ref": "#/$defs/error"}
+      },
+      "additionalProperties": false
+    },
+    "conversation": {
+      "type": "object",
+      "required": ["conversation_id", "title", "participants", "turns", "status",
+        "started_at", "ended_at", "start_ns", "end_ns", "duration_ns", "error"],
+      "properties": {
+        "conversation_id": {"$ref": "#/$defs/id"}, "title": {"type": "string"},
+        "participants": {"type": "array", "items": {"type": "string"}},
+        "turns": {"type": "array", "items": {"$ref": "#/$defs/turn"}},
+        "status": {"enum": ["active", "completed", "failed", "cancelled"]},
+        "started_at": {"type": "string"}, "ended_at": {"type": "string"},
+        "start_ns": {"type": "integer", "minimum": 0},
+        "end_ns": {"type": "integer", "minimum": 0},
+        "duration_ns": {"type": "integer", "minimum": 0},
+        "error": {"$ref": "#/$defs/error"}
+      },
+      "additionalProperties": false
+    },
+    "event": {
+      "type": "object",
+      "required": ["type", "event_id", "name", "timestamp", "timestamp_ns",
+        "payload", "artifact_refs"],
+      "properties": {
+        "type": {"enum": ["agent_handoff", "retrieval", "model_request",
+          "model_response", "tool_request", "tool_response", "policy_decision",
+          "evaluator_result", "human_review", "error", "custom"]},
+        "event_id": {"$ref": "#/$defs/id"}, "name": {"type": "string"},
+        "timestamp": {"type": "string"}, "timestamp_ns": {"type": "integer", "minimum": 0},
+        "payload": {"type": "object"},
+        "artifact_refs": {"type": "array", "items": {"$ref": "#/$defs/artifact"}}
+      },
+      "additionalProperties": false
+    },
+    "link": {
+      "type": "object",
+      "required": ["trace_id", "span_id", "relationship", "attributes"],
+      "properties": {
+        "trace_id": {"$ref": "#/$defs/id"}, "span_id": {"$ref": "#/$defs/id"},
+        "relationship": {"enum": ["follows_from", "handoff", "related"]},
+        "attributes": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
+    "span": {
+      "type": "object",
+      "required": ["span_id", "trace_id", "name", "conversation_id", "turn_id",
+        "parent_span_id", "kind", "agent_id", "status", "started_at", "ended_at",
+        "start_ns", "end_ns", "duration_ns", "links", "events", "attributes",
+        "usage", "cost", "error"],
+      "properties": {
+        "span_id": {"$ref": "#/$defs/id"}, "trace_id": {"$ref": "#/$defs/id"},
+        "name": {"type": "string"}, "conversation_id": {"$ref": "#/$defs/id"},
+        "turn_id": {"$ref": "#/$defs/id"},
+        "parent_span_id": {"anyOf": [{"$ref": "#/$defs/id"}, {"type": "null"}]},
+        "kind": {"enum": ["agent", "model", "tool", "retrieval", "policy", "evaluator", "internal"]},
+        "agent_id": {"type": "string"}, "status": {"enum": ["unset", "ok", "error", "cancelled"]},
+        "started_at": {"type": "string"}, "ended_at": {"type": "string"},
+        "start_ns": {"type": "integer", "minimum": 0},
+        "end_ns": {"type": "integer", "minimum": 0},
+        "duration_ns": {"type": "integer", "minimum": 0},
+        "links": {"type": "array", "items": {"$ref": "#/$defs/link"}},
+        "events": {"type": "array", "items": {"$ref": "#/$defs/event"}},
+        "attributes": {"type": "object"}, "usage": {"$ref": "#/$defs/usage"},
+        "cost": {"$ref": "#/$defs/cost"}, "error": {"$ref": "#/$defs/error"}
+      },
+      "additionalProperties": false
+    },
+    "handoff": {
+      "type": "object",
+      "required": ["handoff_id", "source_span_id", "target_span_id",
+        "source_agent_id", "target_agent_id", "status", "payload_ref",
+        "created_at", "updated_at", "error"],
+      "properties": {
+        "handoff_id": {"$ref": "#/$defs/id"}, "source_span_id": {"$ref": "#/$defs/id"},
+        "target_span_id": {"anyOf": [{"$ref": "#/$defs/id"}, {"type": "null"}]},
+        "source_agent_id": {"type": "string"},
+        "target_agent_id": {"type": "string"},
+        "status": {"enum": ["requested", "accepted", "completed", "failed", "cancelled"]},
+        "payload_ref": {"anyOf": [{"$ref": "#/$defs/artifact"}, {"type": "null"}]},
+        "created_at": {"type": "string"}, "updated_at": {"type": "string"},
+        "error": {"$ref": "#/$defs/error"}
+      },
+      "additionalProperties": false
+    }
+  }
+}
