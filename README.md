@@ -1,3 +1,5 @@
+![Agent Black Box - replay every agent decision, prove the fix, and catch what it broke](docs/agent-black-box-hero.png)
+
 # Agent Black Box
 
 **Every enterprise agent decision, replayable and measurable.**
